@@ -2,7 +2,7 @@ import CreateForumForm from "@/components/create-forum-form";
 import { getKindeServerSession } from "@kinde-oss/kinde-auth-nextjs/server";
 import { redirect } from "next/navigation";
 
-export default async function () {
+export default async function CreateForumRoute () {
   const { isAuthenticated } = getKindeServerSession();
   const isAuth = await isAuthenticated();
 

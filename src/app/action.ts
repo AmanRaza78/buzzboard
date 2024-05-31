@@ -59,3 +59,37 @@ export async function createForum(prevState: any, formData: FormData) {
     throw e
   }
 }
+
+export async function updateForumDescription(prevState:any, formData:FormData){
+    const {getUser} = getKindeServerSession()
+    const user = await getUser()
+
+    if(!user){
+        return redirect("/api/auth/login")
+    }
+
+    try {
+        const forumName = formData.get("forumName") as string
+        const description = formData.get("description") as string
+    
+        await prisma.forum.update({
+            where:{
+                name: forumName,
+            },
+            data:{
+                description:description,
+            }
+        })
+
+        return {
+            message:"Succesfully updated the forum description",
+            status:"green"
+        }
+    } catch (e) {
+        return{
+            message: "Something went Wrong",
+            status: "error"
+        } 
+    }
+
+}
