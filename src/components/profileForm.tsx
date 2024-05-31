@@ -73,7 +73,7 @@ export default function ProfilePage({
       </p>
 
       <div className="w-full mt-4">
-        <SubmitButton />
+        <SubmitButton text="Save"/>
       </div>
     </form>
   );

@@ -1,30 +1,61 @@
-"use server"
+"use server";
 
-import prisma from "@/lib/db"
-import { getKindeServerSession } from "@kinde-oss/kinde-auth-nextjs/server"
-import { redirect } from "next/navigation"
+import prisma from "@/lib/db";
+import { getKindeServerSession } from "@kinde-oss/kinde-auth-nextjs/server";
+import { Prisma } from "@prisma/client";
+import { redirect } from "next/navigation";
 
-export async function updateUserName(prevState:any, formData:FormData) {
-    const {getUser} = getKindeServerSession()
-    const user = await getUser()
+export async function updateUserName(prevState: any, formData: FormData) {
+  const { getUser } = getKindeServerSession();
+  const user = await getUser();
 
-    if(!user){
-        return redirect("/api/auth/login")
-    }
+  if (!user) {
+    return redirect("/api/auth/login");
+  }
 
-    const firstname = formData.get("firstname") as string
-    const lastname = formData.get("lastname") as string
+  const firstname = formData.get("firstname") as string;
+  const lastname = formData.get("lastname") as string;
 
-    await prisma.user.update({
-        where:{
-            id: user.id
-        },
-        data:{
-            firstname:firstname,
-            lastname:lastname
+  await prisma.user.update({
+    where: {
+      id: user.id,
+    },
+    data: {
+      firstname: firstname,
+      lastname: lastname,
+    },
+  });
+
+  return { message: "Succesfully updated the user profile" };
+}
+
+export async function createForum(prevState: any, formData: FormData) {
+  const { getUser } = getKindeServerSession();
+  const user = await getUser();
+
+  if (!user) {
+    return redirect("/api/auth/login");
+  }
+
+  try {
+    const title = formData.get("title") as string;
+    await prisma.forum.create({
+      data: {
+        name: title,
+        userId: user.id,
+      },
+    });
+
+    return redirect("/");
+  } catch (e) {
+    if (e instanceof Prisma.PrismaClientKnownRequestError){
+        if(e.code==="P2002"){
+            return {
+                message: "This Name is already used",
+                status: "error"
+            }
         }
-    })
-
-    return{message: "Succesfully updated the user profile"}
-
+    }
+    throw e
+  }
 }
