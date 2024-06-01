@@ -24,6 +24,9 @@ model User {
   updatedAt DateTime @updatedAt
 
   forum Forum[]
+  post Post[]
+
+
 }
 
 model Forum {
@@ -32,6 +35,26 @@ model Forum {
   description String?
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
+
   userId      String
   user        User     @relation(fields: [userId], references: [id])
+
+  post Post[]
+}
+
+model Post {
+  id String @id @default(uuid())
+  title String
+  content String?
+  postImage String?
+
+  createdAt DateTime @default(now())
+  updateAt DateTime @updatedAt
+
+  forumName String
+  forum Forum @relation(fields: [forumName], references: [name])
+
+  userId String
+  user User @relation(fields: [userId], references: [id])
+
 }

@@ -1,10 +1,7 @@
-import { updateForumDescription } from "@/app/action";
-import ForumSubmitButton from "@/components/forum-button";
 import ForumDesctiptionForm from "@/components/forum-description-form";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
-import { Textarea } from "@/components/ui/textarea";
 import prisma from "@/lib/db";
 import { getKindeServerSession } from "@kinde-oss/kinde-auth-nextjs/server";
 import { Cake } from "lucide-react";

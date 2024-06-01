@@ -48,48 +48,80 @@ export async function createForum(prevState: any, formData: FormData) {
 
     return redirect("/");
   } catch (e) {
-    if (e instanceof Prisma.PrismaClientKnownRequestError){
-        if(e.code==="P2002"){
-            return {
-                message: "This Name is already used",
-                status: "error"
-            }
-        }
+    if (e instanceof Prisma.PrismaClientKnownRequestError) {
+      if (e.code === "P2002") {
+        return {
+          message: "This Name is already used",
+          status: "error",
+        };
+      }
     }
-    throw e
+    throw e;
   }
 }
 
-export async function updateForumDescription(prevState:any, formData:FormData){
-    const {getUser} = getKindeServerSession()
-    const user = await getUser()
+export async function updateForumDescription(
+  prevState: any,
+  formData: FormData
+) {
+  const { getUser } = getKindeServerSession();
+  const user = await getUser();
 
-    if(!user){
-        return redirect("/api/auth/login")
-    }
+  if (!user) {
+    return redirect("/api/auth/login");
+  }
 
-    try {
-        const forumName = formData.get("forumName") as string
-        const description = formData.get("description") as string
-    
-        await prisma.forum.update({
-            where:{
-                name: forumName,
-            },
-            data:{
-                description:description,
-            }
-        })
+  try {
+    const forumName = formData.get("forumName") as string;
+    const description = formData.get("description") as string;
 
-        return {
-            message:"Succesfully updated the forum description",
-            status:"green"
-        }
-    } catch (e) {
-        return{
-            message: "Something went Wrong",
-            status: "error"
-        } 
-    }
+    await prisma.forum.update({
+      where: {
+        name: forumName,
+      },
+      data: {
+        description: description,
+      },
+    });
 
+    return {
+      message: "Succesfully updated the forum description",
+      status: "green",
+    };
+  } catch (e) {
+    return {
+      message: "Something went Wrong",
+      status: "error",
+    };
+  }
+}
+
+export async function createPost(formData: FormData) {
+  const { getUser } = getKindeServerSession();
+  const user = await getUser();
+
+  if (!user) {
+    return redirect("/api/auth/login");
+  }
+
+  try {
+    const title = formData.get("title") as string;
+    const imageUrl = formData.get("imageUrl") as string | null;
+    const forumName = formData.get("forumName") as string;
+    const content = formData.get("content") as string | null;
+
+    await prisma.post.create({
+      data: {
+        title: title,
+        postImage: imageUrl ?? undefined,
+        forumName: forumName,
+        userId: user.id,
+        content: content ?? undefined,
+      },
+    });
+
+    return redirect("/");
+  } catch (e) {
+    throw e;
+  }
 }
