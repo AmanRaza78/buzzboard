@@ -25,6 +25,7 @@ model User {
 
   forum Forum[]
   post Post[]
+  vote Vote[]
 
 
 }
@@ -56,5 +57,25 @@ model Post {
 
   userId String
   user User @relation(fields: [userId], references: [id])
+
+  vote Vote[]
+
+}
+
+enum TypeOfVote {
+  UP
+  DOWN
+}
+
+model Vote {
+  id String @id @default(uuid())
+
+  postId String
+  post Post @relation(fields: [postId], references: [id])
+
+  userId String
+  user User @relation(fields: [userId], references: [id])
+
+  voteType TypeOfVote
 
 }
