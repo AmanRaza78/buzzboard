@@ -8,48 +8,57 @@ import Link from "next/link";
 import PostCard from "@/components/post-card";
 import { Suspense } from "react";
 import { SuspenseCard } from "@/components/suspense-card";
+import Pagination from "@/components/pagination";
 
-async function getData() {
-  const data = await prisma.post.findMany({
-    select: {
-      title: true,
-      createdAt: true,
-      content: true,
-      id: true,
-      postImage: true,
+async function getData(searchParams: string) {
+  const [count, data] = await prisma.$transaction([
+    prisma.post.count(),
+    prisma.post.findMany({
+      take: 10,
+      skip: searchParams ? (Number(searchParams) - 1) * 10 : 0,
+      select: {
+        title: true,
+        createdAt: true,
+        content: true,
+        id: true,
+        postImage: true,
 
-      user: {
-        select: {
-          firstname: true,
-          lastname: true,
+        user: {
+          select: {
+            firstname: true,
+            lastname: true,
+          },
         },
-      },
 
-      vote: {
-        select: {
-          userId: true,
-          voteType: true,
-          postId: true,
+        vote: {
+          select: {
+            userId: true,
+            voteType: true,
+            postId: true,
+          },
         },
+
+        forumName: true,
       },
-
-      forumName: true,
-    },
-    orderBy: {
-      createdAt: "desc",
-    },
-  });
-
-  return data;
+      orderBy: {
+        createdAt: "desc",
+      },
+    }),
+  ]);
+  return { count, data };
 }
 
-export default function Home() {
+export default function Home({
+  searchParams,
+}: {
+  searchParams: { page: string };
+}) {
   return (
-    <div className="max-w-[1000px] mx-auto flex gap-x-10 mt-4">
+    <div className="max-w-[1000px] mx-auto flex gap-x-10 mt-4 mb-10">
       <div className="w-[65%] flex flex-col gap-y-5">
         <CreatePostSearch />
-        <Suspense fallback={<SuspenseCard/>}>
-          <ShowPostItems />
+        <Suspense fallback={<SuspenseCard />}>
+          <ShowPostItems searchParams={searchParams} />
         </Suspense>
       </div>
 
@@ -82,8 +91,12 @@ export default function Home() {
   );
 }
 
-async function ShowPostItems() {
-  const data = await getData();
+async function ShowPostItems({
+  searchParams,
+}: {
+  searchParams: { page: string };
+}) {
+  const { count, data } = await getData(searchParams.page);
 
   return (
     <>
@@ -104,6 +117,8 @@ async function ShowPostItems() {
           }, 0)}
         />
       ))}
+
+      <Pagination totalPages={Math.ceil(count / 10)} />
     </>
   );
 }

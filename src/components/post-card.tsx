@@ -46,8 +46,8 @@ export default function PostCard({
 
       <div>
         <div className="flex items-center gap-x-2 p-2">
-          <Link className="font-semibold text-xs" href={`/r/${forumName}`}>
-            r/{forumName}
+          <Link className="font-semibold text-xs" href={`/forum/${forumName}`}>
+            f/{forumName}
           </Link>
           <p className="text-xs text-muted-foreground">
             Posted by: <span className="hover:text-primary">u/{userName}</span>
