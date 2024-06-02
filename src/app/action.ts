@@ -41,14 +41,14 @@ export async function createForum(prevState: any, formData: FormData) {
 
   try {
     const title = formData.get("title") as string;
-    await prisma.forum.create({
+    const data = await prisma.forum.create({
       data: {
         name: title,
         userId: user.id,
       },
     });
 
-    return redirect("/");
+    return redirect(`/forum/${data.name}`);
   } catch (e) {
     if (e instanceof Prisma.PrismaClientKnownRequestError) {
       if (e.code === "P2002") {
@@ -112,7 +112,7 @@ export async function createPost(formData: FormData) {
     const forumName = formData.get("forumName") as string;
     const content = formData.get("content") as string | null;
 
-    await prisma.post.create({
+    const data = await prisma.post.create({
       data: {
         title: title,
         postImage: imageUrl ?? undefined,
@@ -122,7 +122,7 @@ export async function createPost(formData: FormData) {
       },
     });
 
-    return redirect("/");
+    return redirect(`/post/${data.id}`);
   } catch (e) {
     throw e;
   }
@@ -175,4 +175,27 @@ export async function handleVote(formData: FormData) {
     },
   });
   return revalidatePath("/");
+}
+
+
+export async function createComment(formData:FormData){
+  const {getUser} = getKindeServerSession()
+  const user = await getUser()
+
+  if(!user){
+    return redirect('/api/auth/login')
+  }
+
+  const comment = formData.get("comment") as string
+  const postId = formData.get("postId") as string
+
+  const data = await prisma.comment.create({
+    data:{
+      text:comment,
+      userId: user.id,
+      postId:postId
+    }
+  })
+
+  revalidatePath(`/post/${postId}`)
 }

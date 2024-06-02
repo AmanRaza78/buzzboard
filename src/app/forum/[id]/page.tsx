@@ -34,6 +34,11 @@ async function getData(name: string, searchParams:string) {
           select: {
             title: true,
             postImage: true,
+            comment:{
+              select:{
+                id:true
+              }
+            },
             id: true,
             content: true,
             vote: {
@@ -78,6 +83,7 @@ export default async function ForumPageRoute({
             key={post.id}
             id={post.id}
             postImage={post.postImage}
+            commentAmount={post.comment.length}
             forumName={data.name}
             title={post.title}
             content={post.content}

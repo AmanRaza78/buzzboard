@@ -3,7 +3,6 @@ import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
 import prisma from "@/lib/db";
-import Image from "next/image";
 import Link from "next/link";
 import PostCard from "@/components/post-card";
 import { Suspense } from "react";
@@ -22,6 +21,12 @@ async function getData(searchParams: string) {
         content: true,
         id: true,
         postImage: true,
+
+        comment: {
+          select: {
+            id: true,
+          },
+        },
 
         user: {
           select: {
@@ -58,7 +63,7 @@ export default function Home({
       <div className="w-[65%] flex flex-col gap-y-5">
         <CreatePostSearch />
         <Suspense fallback={<SuspenseCard />} key={searchParams.page}>
-          <ShowPostItems searchParams={searchParams}/>
+          <ShowPostItems searchParams={searchParams} />
         </Suspense>
       </div>
 
@@ -79,9 +84,6 @@ export default function Home({
             <div className="flex flex-col gap-y-3">
               <Button asChild>
                 <Link href="/forum/create"> Create Forum</Link>
-              </Button>
-              <Button asChild variant="secondary">
-                <Link href="/forum/python/create">Create Post</Link>
               </Button>
             </div>
           </div>
@@ -105,6 +107,7 @@ async function ShowPostItems({
           id={post.id}
           postImage={post.postImage}
           content={post.content}
+          commentAmount={post.comment.length}
           forumName={post.forumName}
           title={post.title}
           userName={post.user.firstname as string}

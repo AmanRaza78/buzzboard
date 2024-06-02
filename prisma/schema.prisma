@@ -26,6 +26,7 @@ model User {
   forum Forum[]
   post Post[]
   vote Vote[]
+  comment Comment[]
 
 
 }
@@ -59,6 +60,7 @@ model Post {
   user User @relation(fields: [userId], references: [id])
 
   vote Vote[]
+  comment Comment[]
 
 }
 
@@ -79,3 +81,17 @@ model Vote {
   voteType TypeOfVote
 
 }
+
+model Comment {
+  id String @id @default(uuid())
+  text String
+  createAt DateTime @default(now())
+
+  userId String
+  user User @relation(fields: [userId], references: [id])
+
+  postId String
+  post Post @relation(fields: [postId], references: [id])
+}
+
+

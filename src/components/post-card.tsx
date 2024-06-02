@@ -16,6 +16,7 @@ interface PostCardProps {
   userName: string;
   postImage: string | null;
   voteCount: number;
+  commentAmount: number
 
 }
 
@@ -26,7 +27,8 @@ export default function PostCard({
   forumName,
   userName,
   title,
-  voteCount
+  voteCount,
+  commentAmount
 }: PostCardProps) {
   return (
     <Card className="flex relative overflow-hidden">
@@ -78,7 +80,7 @@ export default function PostCard({
           <div className="flex items-center gap-x-1">
             <MessageCircle className="h-4 w-4 text-muted-foreground" />
             <p className="text-muted-foreground font-medium text-xs">
-              31 Comments
+              {commentAmount} Comments
             </p>
           </div>
           <CopyLink id={id} />
