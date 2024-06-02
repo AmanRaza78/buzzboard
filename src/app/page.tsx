@@ -57,8 +57,8 @@ export default function Home({
     <div className="max-w-[1000px] mx-auto flex gap-x-10 mt-4 mb-10">
       <div className="w-[65%] flex flex-col gap-y-5">
         <CreatePostSearch />
-        <Suspense fallback={<SuspenseCard />}>
-          <ShowPostItems searchParams={searchParams} />
+        <Suspense fallback={<SuspenseCard />} key={searchParams.page}>
+          <ShowPostItems searchParams={searchParams}/>
         </Suspense>
       </div>
 
