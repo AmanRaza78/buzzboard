@@ -47,7 +47,7 @@ export default function CreateForumForm() {
       <Input id="title" name="title" required minLength={2} maxLength={21} />
 
       <p className="text-muted-foreground text-sm mt-2">
-        Forum title should be unique
+        Forum title should be unique and there should be no white spaces
       </p>
 
 
